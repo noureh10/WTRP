@@ -1,3 +1,4 @@
+import current_state as cs
 from pypresence import Presence as prsc
 import sys
 import os
@@ -14,8 +15,9 @@ def error_message(message):
 	print(message, file=sys.stderr)
 
 def is_wt_active():
-	return (os.system(f'tasklist /fi "imagename eq aces.exe" > nul 2>&1')  == 0)
-
+	process_name = "aces.exe"
+	output = os.popen(f'tasklist /FI "IMAGENAME eq {process_name}"').read()
+	return (process_name in output)
 
 def rich_presence_loop():
 	if (not (is_wt_active())):
@@ -29,10 +31,10 @@ def rich_presence_loop():
 		exit(1)
 	current_time = time.time()
 	while (is_wt_active()):
-		current_state = "future state function"
-		current_details = "future details function"
-		rpc.update(state=current_state, details=current_details, start=current_time)
-		time.sleep(10)
+		main_data = cs.get_vehicle()
+		secondary_data = "..."
+		rpc.update(state="...", details=main_data, start=current_time)
+		time.sleep(15) 
 
 if __name__ == "__main__" :
     rich_presence_loop()
